@@ -9,7 +9,12 @@ import 'package:image/image.dart' as img;
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
-void main(List<String> args) {
+Future<void> main(List<String> args) async {
+  WidgetsFlutterBinding.ensureInitialized();
+  if (Platform.isMacOS) {
+    await FilePicker.skipEntitlementsChecks();
+  }
+
   runApp(ImageResizerApp(initialImagePath: firstImagePathArgument(args)));
 }
 

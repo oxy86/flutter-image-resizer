@@ -48,6 +48,21 @@ flutter build linux
 flutter build windows
 ```
 
+## Tagged Releases
+
+GitHub Actions builds release artifacts for every pushed tag:
+
+```sh
+git tag v1.0.0
+git push origin v1.0.0
+```
+
+The workflow publishes:
+
+- macOS zipped `.app`
+- Linux `.AppImage`
+- Windows setup `.exe`
+
 ## Launcher Icons
 
 Launcher icons are generated from `assets/icons/icon-1024.png`.
@@ -59,6 +74,8 @@ dart run flutter_launcher_icons
 ```
 
 Linux hicolor PNG assets live under `linux/icons/hicolor` and are installed by the Linux CMake bundle step.
+
+If macOS shows the old Flutter icon for one build folder but not another, the bundle usually has the correct `AppIcon.icns` and Finder/Dock is serving a cached icon. Rebuild the target, remove any old Dock entry, and if needed move the `.app` to a new path or clear the icon cache.
 
 ## Linux `Open With...`
 
@@ -77,10 +94,7 @@ The `Exec` path in the installed desktop file must point to the built `flutter_i
 
 The macOS bundle declares image document types in `macos/Runner/Info.plist`. Finder uses this metadata to show the built `.app` in `Open With...`.
 
-The app also enables these sandbox entitlements so file dialogs and automatic Downloads exports work:
-
-- `com.apple.security.files.user-selected.read-write`
-- `com.apple.security.files.downloads.read-write`
+The macOS app is intentionally not sandboxed. WEBP export launches the bundled `cwebp` encoder process, and the app sandbox blocks that subprocess with `Operation not permitted`. `file_picker` entitlement checks are skipped at startup on macOS for this non-sandboxed distribution model.
 
 To set it as default for an image type:
 

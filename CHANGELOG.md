@@ -10,8 +10,14 @@
 - Added sanitized underscore filenames with configurable max base filename length.
 - Added Linux `.desktop` image MIME registration metadata.
 - Added macOS image document type registration metadata.
-- Added macOS file access entitlements for file picker dialogs and Downloads exports.
+- Configured macOS as a non-sandboxed app so bundled WEBP export can execute `cwebp`.
 - Added launcher icon generation for macOS and Windows through `flutter_launcher_icons`.
 - Added Linux hicolor launcher icon assets from the same source icon.
+- Added a tag-triggered GitHub Actions release workflow.
+- Added macOS zipped `.app` release artifact generation.
+- Added Linux AppImage release artifact generation.
+- Added Windows setup release artifact generation with Inno Setup.
 - Added launch/open-file handling for Linux command-line paths and macOS Finder open events.
+- Added MIT license.
 - Added README, changelog, roadmap, and baseline tests.
+- Updated `.gitignore` for Flutter desktop artifacts while preserving the bundled Windows `cwebp.exe`.

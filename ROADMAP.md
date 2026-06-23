@@ -1,27 +1,19 @@
 # Roadmap
 
-## Near Term
+## Settings
 
 - Add a Settings dialog backed by `AppSettings`.
 - Persist settings between launches.
-- Let users choose the default export directory.
-- Let users change the default export format.
-- Let users change the default resize preset and custom size defaults.
-- Let users change max output filename length.
-- Add configurable JPEG and WEBP quality controls.
+- Let users configure export directory, default format, resize defaults, filename length, and export quality.
 
 ## Packaging
 
-- Add Linux packaging for `.deb`, AppImage, or Flatpak.
-- Install the Linux `.desktop` file with the correct absolute `Exec` path.
-- Add Linux icon installation and MIME database refresh steps.
-- Add macOS app signing and notarization notes.
+- Add `.deb` or Flatpak packaging for Linux.
+- Add macOS signing and notarization.
+- Add Windows installer code signing.
+- Add release smoke tests for generated artifacts.
+
+## File Associations
+
 - Add Windows file association support.
-
-## Image Workflow
-
-- Add drag-and-drop image loading.
-- Add batch resize/export.
-- Add overwrite/auto-increment filename setting.
-- Add export-complete notification or reveal-in-folder action.
-- Add metadata preservation options where supported.
+- Improve Linux install scripts for `.desktop` registration, icon cache refresh, and MIME database refresh.

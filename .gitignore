@@ -44,6 +44,11 @@ migrate_working_dir/
 *.exe
 *.zip
 *.tar.gz
+/dist/
+/appimagetool
+
+# Bundled runtime tools that must be versioned.
+!assets/cwebp/windows-x64/cwebp.exe
 
 # Symbolication related
 app.*.symbols
