@@ -66,8 +66,22 @@ jobs:
         run: |
           app="build/macos/Build/Products/Release/flutter_image_resizer.app"
           find "$app" -type f -exec xattr -c {} \;
+
+          for helper in \
+            "$app/Contents/Frameworks/App.framework/Versions/A/Resources/flutter_assets/assets/cwebp/macos-x64/cwebp" \
+            "$app/Contents/Frameworks/App.framework/Versions/A/Resources/flutter_assets/assets/cwebp/macos-arm64/cwebp"
+          do
+            chmod +x "$helper"
+            codesign --force --verbose \
+              --options runtime \
+              --timestamp \
+              --sign "$MACOS_SIGNING_IDENTITY" \
+              "$helper"
+          done
+
           codesign --deep --force --verbose \
             --options runtime \
+            --timestamp \
             --entitlements macos/Runner/Notarization.entitlements \
             --sign "$MACOS_SIGNING_IDENTITY" \
             "$app"
@@ -83,6 +97,7 @@ jobs:
             -format UDZO \
             "dist/flutter_image_resizer-${GITHUB_REF_NAME}-macos.dmg"
           codesign --force \
+            --timestamp \
             --sign "$MACOS_SIGNING_IDENTITY" \
             "dist/flutter_image_resizer-${GITHUB_REF_NAME}-macos.dmg"
 
@@ -96,7 +111,7 @@ jobs:
           echo "$submit_output"
 
           submission_id=$(echo "$submit_output" | awk '/id:/ {print $2; exit}')
-          status=$(echo "$submit_output" | awk '/status:/ {print $2; exit}')
+          status=$(echo "$submit_output" | awk '$1 == "status:" {print $2; exit}')
 
           if [[ "$status" != "Accepted" ]]; then
             echo "Notarization failed with status: ${status:-unknown}"

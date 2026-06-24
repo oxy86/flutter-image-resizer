@@ -8,6 +8,7 @@
 - Changed default JPEG quality to `80`.
 - Added a full-width Settings note explaining that leaving custom width or height empty preserves the original aspect ratio.
 - Added macOS Developer ID signing, DMG creation, notarization, and stapling to the release workflow.
+- Signed bundled macOS `cwebp` helper binaries for notarized releases.
 - Added a simple About dialog with app metadata and repository URL.
 - Bumped app version to `1.2.0+1`.
 
