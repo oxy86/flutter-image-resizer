@@ -13,6 +13,7 @@ A small Flutter desktop app for loading an image, previewing it, resizing it, an
 - Bundles `cwebp` binaries for WEBP export on Linux, macOS, and Windows desktop builds.
 - Registers image file handling metadata for Linux and macOS so the app can appear in `Open With...`.
 - Supports `Ctrl+O` / `Cmd+O` to open an image and `Ctrl+S` / `Cmd+S` to export.
+- Persists app settings for defaults such as export directory, format, resize, filename length, and export quality.
 
 ## Defaults
 
@@ -23,9 +24,9 @@ Defaults are centralized in `AppSettings` in `lib/main.dart`:
 - `defaultExportDirectory`: system Downloads folder when unset
 - `maxBaseFilenameLength`: `32`
 - `webpQuality`: `80`
-- `jpegQuality`: `90`
+- `jpegQuality`: `80`
 
-This is intentional so a future Settings dialog can update one settings model instead of changing export logic.
+These defaults can be changed from the Settings dialog.
 
 The default export behavior is equivalent to:
 

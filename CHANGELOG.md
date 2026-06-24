@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.2.0 - 2026-06-24
+
+- Added a Settings dialog.
+- Persisted default format, resize preset, custom size defaults, export directory, filename length, WEBP quality, and JPEG quality.
+- Displayed the default Downloads export directory in Settings.
+- Changed default JPEG quality to `80`.
+- Added a full-width Settings note explaining that leaving custom width or height empty preserves the original aspect ratio.
+- Bumped app version to `1.2.0+1`.
+
 ## 1.1.0 - 2026-06-24
 
 - Added `Ctrl+O` / `Cmd+O` for opening images.

@@ -43,6 +43,25 @@ void main() {
     );
   });
 
+  testWidgets('opens settings dialog', (tester) async {
+    await tester.pumpWidget(const ImageResizerApp());
+
+    await tester.tap(find.byTooltip('Settings'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Settings'), findsOneWidget);
+    expect(find.text('Default format'), findsOneWidget);
+    expect(find.text('Export directory'), findsOneWidget);
+    expect(find.text('WEBP quality'), findsOneWidget);
+    expect(find.text('JPEG quality'), findsOneWidget);
+    expect(
+      find.text(
+        'Leave width or height empty to preserve the original aspect ratio.',
+      ),
+      findsOneWidget,
+    );
+  });
+
   test('sanitizes output filenames with underscores and max length', () {
     final filename = sanitizeBaseFilename(
       'My Vacation Photo (Final Export) 2026',

@@ -1,10 +1,10 @@
 # Roadmap
 
-## Settings
+## Settings Polish
 
-- Add a Settings dialog backed by `AppSettings`.
-- Persist settings between launches.
-- Let users configure export directory, default format, resize defaults, filename length, and export quality.
+- Add validation messages for invalid settings values.
+- Add a reset-to-defaults action.
+- Add controls for overwrite vs. auto-increment export filenames.
 
 ## Packaging
 
