@@ -88,11 +88,30 @@ jobs:
 
       - name: Notarize and staple DMG
         run: |
-          xcrun notarytool submit \
-            "dist/flutter_image_resizer-${GITHUB_REF_NAME}-macos.dmg" \
+          dmg="dist/flutter_image_resizer-${GITHUB_REF_NAME}-macos.dmg"
+          submit_output=$(xcrun notarytool submit \
+            "$dmg" \
             --keychain-profile "AC_PASSWORD" \
-            --wait
-          xcrun stapler staple "dist/flutter_image_resizer-${GITHUB_REF_NAME}-macos.dmg"
+            --wait 2>&1)
+          echo "$submit_output"
+
+          submission_id=$(echo "$submit_output" | awk '/id:/ {print $2; exit}')
+          status=$(echo "$submit_output" | awk '/status:/ {print $2; exit}')
+
+          if [[ "$status" != "Accepted" ]]; then
+            echo "Notarization failed with status: ${status:-unknown}"
+            if [[ -n "$submission_id" ]]; then
+              xcrun notarytool log \
+                "$submission_id" \
+                --keychain-profile "AC_PASSWORD" \
+                notarization-log.json
+              cat notarization-log.json
+            fi
+            exit 1
+          fi
+
+          xcrun stapler staple "$dmg"
+          xcrun stapler validate "$dmg"
 
       - name: Upload macOS artifact
         uses: actions/upload-artifact@v4
