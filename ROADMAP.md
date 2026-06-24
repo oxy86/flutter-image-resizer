@@ -9,7 +9,6 @@
 ## Packaging
 
 - Add `.deb` or Flatpak packaging for Linux.
-- Add macOS signing and notarization.
 - Add Windows installer code signing.
 - Add release smoke tests for generated artifacts.
 

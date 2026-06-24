@@ -31,18 +31,63 @@ jobs:
       - name: Build macOS app
         run: flutter build macos --release
 
-      - name: Package macOS app
+      - name: Import Developer ID certificate
+        run: |
+          echo "${{ secrets.MACOS_CERTIFICATE }}" | base64 --decode > certificate.p12
+          security create-keychain -p "" build.keychain
+          security default-keychain -s build.keychain
+          security unlock-keychain -p "" build.keychain
+          security import certificate.p12 \
+            -k build.keychain \
+            -P "${{ secrets.MACOS_CERTIFICATE_PASSWORD }}" \
+            -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple: -k "" build.keychain
+          rm -f certificate.p12
+
+      - name: Store notarization credentials
+        run: |
+          xcrun notarytool store-credentials "AC_PASSWORD" \
+            --apple-id "${{ secrets.AC_APPLE_ID }}" \
+            --team-id "${{ secrets.AC_TEAM_ID }}" \
+            --password "${{ secrets.AC_PASSWORD }}"
+
+      - name: Sign macOS app
+        run: |
+          app="build/macos/Build/Products/Release/flutter_image_resizer.app"
+          find "$app" -type f -exec xattr -c {} \;
+          codesign --deep --force --verbose \
+            --options runtime \
+            --entitlements macos/Runner/Notarization.entitlements \
+            --sign "Developer ID Application: Dimitris Kalamaras (${{ secrets.AC_TEAM_ID }})" \
+            "$app"
+          codesign --verify --deep --strict --verbose=2 "$app"
+
+      - name: Create signed DMG
         run: |
           mkdir -p dist
-          ditto -c -k --sequesterRsrc --keepParent \
-            build/macos/Build/Products/Release/flutter_image_resizer.app \
-            "dist/flutter_image_resizer-${GITHUB_REF_NAME}-macos.zip"
+          hdiutil create \
+            -volname "Image Resizer" \
+            -srcfolder build/macos/Build/Products/Release/flutter_image_resizer.app \
+            -ov \
+            -format UDZO \
+            "dist/flutter_image_resizer-${GITHUB_REF_NAME}-macos.dmg"
+          codesign --force \
+            --sign "Developer ID Application: Dimitris Kalamaras (${{ secrets.AC_TEAM_ID }})" \
+            "dist/flutter_image_resizer-${GITHUB_REF_NAME}-macos.dmg"
+
+      - name: Notarize and staple DMG
+        run: |
+          xcrun notarytool submit \
+            "dist/flutter_image_resizer-${GITHUB_REF_NAME}-macos.dmg" \
+            --keychain-profile "AC_PASSWORD" \
+            --wait
+          xcrun stapler staple "dist/flutter_image_resizer-${GITHUB_REF_NAME}-macos.dmg"
 
       - name: Upload macOS artifact
         uses: actions/upload-artifact@v4
         with:
           name: macos
-          path: dist/*.zip
+          path: dist/*.dmg
 
   linux:
     name: Linux AppImage

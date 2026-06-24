@@ -61,9 +61,17 @@ git push origin v1.0.0
 
 The workflow publishes:
 
-- macOS zipped `.app`
+- notarized macOS `.dmg`
 - Linux `.AppImage`
 - Windows setup `.exe`
+
+For macOS signing and notarization, configure these GitHub repository secrets:
+
+- `MACOS_CERTIFICATE`: base64-encoded Developer ID Application `.p12`
+- `MACOS_CERTIFICATE_PASSWORD`: password for that `.p12`
+- `AC_APPLE_ID`: Apple ID used for notarization
+- `AC_TEAM_ID`: Apple Developer Team ID
+- `AC_PASSWORD`: app-specific password for the Apple ID
 
 ## Launcher Icons
 
