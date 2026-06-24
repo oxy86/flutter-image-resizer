@@ -14,6 +14,7 @@ A small Flutter desktop app for loading an image, previewing it, resizing it, an
 - Registers image file handling metadata for Linux and macOS so the app can appear in `Open With...`.
 - Supports `Ctrl+O` / `Cmd+O` to open an image and `Ctrl+S` / `Cmd+S` to export.
 - Persists app settings for defaults such as export directory, format, resize, filename length, and export quality.
+- Includes a simple About dialog with version, author, license, and repository URL.
 
 ## Defaults
 

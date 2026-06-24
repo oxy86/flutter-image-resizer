@@ -1,7 +1,7 @@
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:flutter_image_resizer/main.dart';
@@ -62,6 +62,22 @@ void main() {
     );
   });
 
+  testWidgets('about dialog shows app metadata', (tester) async {
+    await tester.pumpWidget(
+      const AppShell(child: AboutAppDialog(version: '1.2.0')),
+    );
+
+    expect(find.text('About'), findsOneWidget);
+    expect(find.text('Image Resizer'), findsOneWidget);
+    expect(find.text('1.2.0'), findsOneWidget);
+    expect(find.text('Dimitris Kalamaras'), findsOneWidget);
+    expect(find.text('MIT'), findsOneWidget);
+    expect(
+      find.text('https://github.com/oxy86/flutter-image-resizer/'),
+      findsOneWidget,
+    );
+  });
+
   test('sanitizes output filenames with underscores and max length', () {
     final filename = sanitizeBaseFilename(
       'My Vacation Photo (Final Export) 2026',
@@ -90,4 +106,15 @@ void main() {
     expect(firstImagePathArgument(['--flag', file.path]), file.path);
     expect(firstImagePathArgument(['file://${file.path}']), file.path);
   });
+}
+
+class AppShell extends StatelessWidget {
+  const AppShell({super.key, required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(home: Scaffold(body: child));
+  }
 }

@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image/image.dart' as img;
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -733,6 +734,19 @@ class _ImageResizerHomeState extends State<ImageResizerHome> {
     });
   }
 
+  Future<void> _openAbout() async {
+    final packageInfo = await PackageInfo.fromPlatform();
+
+    if (!mounted) {
+      return;
+    }
+
+    await showDialog<void>(
+      context: context,
+      builder: (context) => AboutAppDialog(version: packageInfo.version),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final loadedImage = _loadedImage;
@@ -748,6 +762,11 @@ class _ImageResizerHomeState extends State<ImageResizerHome> {
           appBar: AppBar(
             title: const Text('Image Resizer'),
             actions: [
+              IconButton(
+                onPressed: _openAbout,
+                tooltip: 'About',
+                icon: const Icon(Icons.info_outline),
+              ),
               Padding(
                 padding: const EdgeInsets.only(right: 12),
                 child: IconButton.filledTonal(
@@ -805,6 +824,63 @@ SingleActivator primaryShortcut(LogicalKeyboardKey key) {
     control: !Platform.isMacOS,
     meta: Platform.isMacOS,
   );
+}
+
+class AboutAppDialog extends StatelessWidget {
+  const AboutAppDialog({super.key, required this.version});
+
+  static const repositoryUrl =
+      'https://github.com/oxy86/flutter-image-resizer/';
+
+  final String version;
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('About'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _AboutRow(label: 'App', value: 'Image Resizer'),
+          _AboutRow(label: 'Version', value: version),
+          _AboutRow(label: 'Author', value: 'Dimitris Kalamaras'),
+          _AboutRow(label: 'License', value: 'MIT'),
+          _AboutRow(label: 'GitHub', value: repositoryUrl),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Close'),
+        ),
+      ],
+    );
+  }
+}
+
+class _AboutRow extends StatelessWidget {
+  const _AboutRow({required this.label, required this.value});
+
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 72,
+            child: Text(label, style: Theme.of(context).textTheme.labelLarge),
+          ),
+          Expanded(child: SelectableText(value)),
+        ],
+      ),
+    );
+  }
 }
 
 class SettingsDialog extends StatefulWidget {
