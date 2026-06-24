@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.1.0 - 2026-06-24
+
+- Added `Ctrl+O` / `Cmd+O` for opening images.
+- Added `Ctrl+S` / `Cmd+S` for exporting the current image.
+- Added widget test coverage for shortcut registration.
+- Documented keyboard shortcuts in the README.
+
 ## 1.0.0 - 2026-06-23
 
 - Created the Flutter desktop app for Linux, macOS, and Windows.
@@ -7,7 +14,6 @@
 - Added configurable app defaults through `AppSettings`.
 - Added WEBP export through bundled `cwebp` binaries.
 - Added PNG and JPEG export support.
-- Added `Ctrl+O` / `Cmd+O` for opening images and `Ctrl+S` / `Cmd+S` for exporting.
 - Added sanitized underscore filenames with configurable max base filename length.
 - Added Linux `.desktop` image MIME registration metadata.
 - Added macOS image document type registration metadata.
