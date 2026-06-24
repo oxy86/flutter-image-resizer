@@ -7,6 +7,7 @@
 - Added configurable app defaults through `AppSettings`.
 - Added WEBP export through bundled `cwebp` binaries.
 - Added PNG and JPEG export support.
+- Added `Ctrl+O` / `Cmd+O` for opening images and `Ctrl+S` / `Cmd+S` for exporting.
 - Added sanitized underscore filenames with configurable max base filename length.
 - Added Linux `.desktop` image MIME registration metadata.
 - Added macOS image document type registration metadata.

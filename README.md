@@ -12,6 +12,7 @@ A small Flutter desktop app for loading an image, previewing it, resizing it, an
 - Output filenames are lower-case, underscore-separated, and capped by the configured max base filename length.
 - Bundles `cwebp` binaries for WEBP export on Linux, macOS, and Windows desktop builds.
 - Registers image file handling metadata for Linux and macOS so the app can appear in `Open With...`.
+- Supports `Ctrl+O` / `Cmd+O` to open an image and `Ctrl+S` / `Cmd+S` to export.
 
 ## Defaults
 

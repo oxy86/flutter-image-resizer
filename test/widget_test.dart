@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:flutter_image_resizer/main.dart';
@@ -13,6 +15,32 @@ void main() {
     expect(find.text('1200x scale'), findsOneWidget);
     expect(find.text('WEBP'), findsOneWidget);
     expect(find.text('Apply'), findsOneWidget);
+  });
+
+  testWidgets('registers open and save keyboard shortcuts', (tester) async {
+    await tester.pumpWidget(const ImageResizerApp());
+
+    final shortcuts = tester.widget<CallbackShortcuts>(
+      find.byType(CallbackShortcuts),
+    );
+    final activators = shortcuts.bindings.keys.whereType<SingleActivator>();
+
+    expect(
+      activators.any((activator) {
+        return activator.trigger == LogicalKeyboardKey.keyO &&
+            activator.control == !Platform.isMacOS &&
+            activator.meta == Platform.isMacOS;
+      }),
+      isTrue,
+    );
+    expect(
+      activators.any((activator) {
+        return activator.trigger == LogicalKeyboardKey.keyS &&
+            activator.control == !Platform.isMacOS &&
+            activator.meta == Platform.isMacOS;
+      }),
+      isTrue,
+    );
   });
 
   test('sanitizes output filenames with underscores and max length', () {

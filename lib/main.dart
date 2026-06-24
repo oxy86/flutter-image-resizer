@@ -594,56 +594,74 @@ class _ImageResizerHomeState extends State<ImageResizerHome> {
   Widget build(BuildContext context) {
     final loadedImage = _loadedImage;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Image Resizer'),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 12),
-            child: IconButton.filledTonal(
-              onPressed: null,
-              tooltip: 'Settings',
-              icon: const Icon(Icons.settings_outlined),
-            ),
-          ),
-        ],
-      ),
-      body: Column(
-        children: [
-          _Toolbar(
-            format: _format,
-            resizePreset: _resizePreset,
-            widthController: _widthController,
-            heightController: _heightController,
-            canApply: loadedImage != null && !_isExporting,
-            isExporting: _isExporting,
-            onFormatChanged: (value) => setState(() => _format = value),
-            onResizeChanged: (value) => setState(() => _resizePreset = value),
-            onPickImage: _pickImage,
-            onApply: _apply,
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(20, 16, 20, 12),
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  border: Border.all(color: Theme.of(context).dividerColor),
-                  borderRadius: BorderRadius.circular(8),
-                  color: const Color(0xfff7f8f5),
-                ),
-                child: Center(
-                  child: loadedImage == null
-                      ? _EmptyState(onPickImage: _pickImage)
-                      : _ImagePreview(image: loadedImage),
+    return CallbackShortcuts(
+      bindings: {
+        primaryShortcut(LogicalKeyboardKey.keyO): _pickImage,
+        primaryShortcut(LogicalKeyboardKey.keyS): _apply,
+      },
+      child: Focus(
+        autofocus: true,
+        child: Scaffold(
+          appBar: AppBar(
+            title: const Text('Image Resizer'),
+            actions: [
+              Padding(
+                padding: const EdgeInsets.only(right: 12),
+                child: IconButton.filledTonal(
+                  onPressed: null,
+                  tooltip: 'Settings',
+                  icon: const Icon(Icons.settings_outlined),
                 ),
               ),
-            ),
+            ],
           ),
-          _StatusBar(image: loadedImage, status: _status),
-        ],
+          body: Column(
+            children: [
+              _Toolbar(
+                format: _format,
+                resizePreset: _resizePreset,
+                widthController: _widthController,
+                heightController: _heightController,
+                canApply: loadedImage != null && !_isExporting,
+                isExporting: _isExporting,
+                onFormatChanged: (value) => setState(() => _format = value),
+                onResizeChanged: (value) =>
+                    setState(() => _resizePreset = value),
+                onPickImage: _pickImage,
+                onApply: _apply,
+              ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 16, 20, 12),
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Theme.of(context).dividerColor),
+                      borderRadius: BorderRadius.circular(8),
+                      color: const Color(0xfff7f8f5),
+                    ),
+                    child: Center(
+                      child: loadedImage == null
+                          ? _EmptyState(onPickImage: _pickImage)
+                          : _ImagePreview(image: loadedImage),
+                    ),
+                  ),
+                ),
+              ),
+              _StatusBar(image: loadedImage, status: _status),
+            ],
+          ),
+        ),
       ),
     );
   }
+}
+
+SingleActivator primaryShortcut(LogicalKeyboardKey key) {
+  return SingleActivator(
+    key,
+    control: !Platform.isMacOS,
+    meta: Platform.isMacOS,
+  );
 }
 
 class _Toolbar extends StatelessWidget {
