@@ -66,7 +66,7 @@ The workflow publishes:
 - Linux `.AppImage`
 - Windows setup `.exe`
 
-For macOS signing and notarization, configure these GitHub repository secrets:
+macOS signing and notarization use these repository secrets:
 
 - `MACOS_CERTIFICATE`: base64-encoded Developer ID Application `.p12`
 - `MACOS_CERTIFICATE_PASSWORD`: password for that `.p12`
@@ -86,20 +86,20 @@ dart run flutter_launcher_icons
 
 Linux hicolor PNG assets live under `linux/icons/hicolor` and are installed by the Linux CMake bundle step.
 
-If macOS shows the old Flutter icon for one build folder but not another, the bundle usually has the correct `AppIcon.icns` and Finder/Dock is serving a cached icon. Rebuild the target, remove any old Dock entry, and if needed move the `.app` to a new path or clear the icon cache.
+macOS may cache app icons by bundle path. If a rebuilt app shows an old icon in Finder or Dock, the bundle can still contain the correct `AppIcon.icns`; moving the `.app` to a fresh path or clearing the old Dock entry refreshes the displayed icon.
 
 ## Linux `Open With...`
 
 The project includes `linux/com.example.flutter_image_resizer.desktop` with image MIME types and `%f` file launching.
 
-For development installs, after building on Linux, copy or package the `.desktop` file into an applications directory and refresh the desktop database:
+Development Linux installs use the desktop entry in a user applications directory, followed by a desktop database refresh:
 
 ```sh
 desktop-file-install --dir="$HOME/.local/share/applications" linux/com.example.flutter_image_resizer.desktop
 update-desktop-database "$HOME/.local/share/applications"
 ```
 
-The `Exec` path in the installed desktop file must point to the built `flutter_image_resizer` executable. After that, Nautilus can show the app in `Open With...`, and users can set it as the default image handler from file properties.
+The `Exec` path in the installed desktop file points to the built `flutter_image_resizer` executable. Nautilus can then show the app in `Open With...`, and the app can be selected as the default image handler from file properties.
 
 ## macOS `Open With...`
 
@@ -107,13 +107,6 @@ The macOS bundle declares image document types in `macos/Runner/Info.plist`. Fin
 
 The macOS app is intentionally not sandboxed. WEBP export launches the bundled `cwebp` encoder process, and the app sandbox blocks that subprocess with `Operation not permitted`. `file_picker` entitlement checks are skipped at startup on macOS for this non-sandboxed distribution model.
 
-To set it as default for an image type:
-
-1. Build the macOS app.
-2. Move or copy the `.app` into `/Applications` or `~/Applications`.
-3. Select an image in Finder.
-4. Open `Get Info`.
-5. Choose Image Resizer under `Open with`.
-6. Click `Change All...`.
+Finder default-app registration uses the standard `Open with` section in `Get Info`. Once the built `.app` is installed in `/Applications` or `~/Applications`, Finder can assign Image Resizer as the handler for a selected image type with `Change All...`.
 
 Finder open events are bridged from `AppDelegate.swift` to Flutter through the `image_resizer/open_file` method channel.
