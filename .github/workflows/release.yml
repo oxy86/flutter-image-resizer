@@ -36,6 +36,7 @@ jobs:
           echo "${{ secrets.MACOS_CERTIFICATE }}" | base64 --decode > certificate.p12
           security create-keychain -p "" build.keychain
           security default-keychain -s build.keychain
+          security list-keychains -d user -s build.keychain
           security unlock-keychain -p "" build.keychain
           security import certificate.p12 \
             -k build.keychain \
@@ -43,6 +44,16 @@ jobs:
             -T /usr/bin/codesign
           security set-key-partition-list -S apple-tool:,apple: -k "" build.keychain
           rm -f certificate.p12
+          security find-identity -v -p codesigning build.keychain
+          SIGNING_IDENTITY=$(security find-identity -v -p codesigning build.keychain \
+            | grep "Developer ID Application" \
+            | head -1 \
+            | sed -E 's/.*"(.+)".*/\1/')
+          if [[ -z "$SIGNING_IDENTITY" ]]; then
+            echo "No Developer ID Application signing identity found in build.keychain"
+            exit 1
+          fi
+          echo "MACOS_SIGNING_IDENTITY=$SIGNING_IDENTITY" >> "$GITHUB_ENV"
 
       - name: Store notarization credentials
         run: |
@@ -58,7 +69,7 @@ jobs:
           codesign --deep --force --verbose \
             --options runtime \
             --entitlements macos/Runner/Notarization.entitlements \
-            --sign "Developer ID Application: Dimitris Kalamaras (${{ secrets.AC_TEAM_ID }})" \
+            --sign "$MACOS_SIGNING_IDENTITY" \
             "$app"
           codesign --verify --deep --strict --verbose=2 "$app"
 
@@ -72,7 +83,7 @@ jobs:
             -format UDZO \
             "dist/flutter_image_resizer-${GITHUB_REF_NAME}-macos.dmg"
           codesign --force \
-            --sign "Developer ID Application: Dimitris Kalamaras (${{ secrets.AC_TEAM_ID }})" \
+            --sign "$MACOS_SIGNING_IDENTITY" \
             "dist/flutter_image_resizer-${GITHUB_REF_NAME}-macos.dmg"
 
       - name: Notarize and staple DMG
