@@ -29,6 +29,36 @@ set -euo pipefail
 
 here="$(dirname "$(readlink -f "$0")")"
 export XDG_DATA_DIRS="$here/usr/share:${XDG_DATA_DIRS:-/usr/local/share:/usr/share}"
+
+integrate_appimage() (
+  set -e
+
+  [[ -n "${APPIMAGE:-}" ]]
+
+  data_home="${XDG_DATA_HOME:-$HOME/.local/share}"
+  applications_dir="$data_home/applications"
+  desktop_file="$applications_dir/com.example.flutter_image_resizer.desktop"
+  appimage_path="$(readlink -f "$APPIMAGE")"
+
+  mkdir -p "$applications_dir"
+  sed "s|^Exec=.*|Exec=\"$appimage_path\" %f|" "$here/com.example.flutter_image_resizer.desktop" > "$desktop_file"
+
+  for icon in "$here"/usr/share/icons/hicolor/*/apps/flutter_image_resizer.png; do
+    size="$(basename "$(dirname "$(dirname "$icon")")")"
+    icon_dir="$data_home/icons/hicolor/$size/apps"
+    mkdir -p "$icon_dir"
+    cp "$icon" "$icon_dir/flutter_image_resizer.png"
+  done
+
+  if command -v update-desktop-database >/dev/null 2>&1; then
+    update-desktop-database "$applications_dir"
+  fi
+)
+
+# GNOME resolves dock icons through its desktop application database rather
+# than the X11 window icon. Register this AppImage for the current user before
+# creating the first window so the shell can associate it with its icon.
+integrate_appimage >/dev/null 2>&1 || true
 exec "$here/usr/lib/flutter_image_resizer/flutter_image_resizer" "$@"
 APPRUN
 

@@ -4,6 +4,7 @@ Name=Image Resizer
 Comment=Resize and convert images
 Exec=flutter_image_resizer %f
 Icon=flutter_image_resizer
+StartupWMClass=Com.example.flutter_image_resizer
 Terminal=false
 Categories=Graphics;Utility;
 MimeType=image/jpeg;image/png;image/webp;image/gif;image/bmp;image/tiff;image/x-tga;image/x-portable-pixmap;image/x-portable-graymap;image/x-portable-bitmap;
