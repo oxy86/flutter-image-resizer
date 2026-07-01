@@ -28,6 +28,7 @@ cat > "$appdir/AppRun" <<'APPRUN'
 set -euo pipefail
 
 here="$(dirname "$(readlink -f "$0")")"
+export XDG_DATA_DIRS="$here/usr/share:${XDG_DATA_DIRS:-/usr/local/share:/usr/share}"
 exec "$here/usr/lib/flutter_image_resizer/flutter_image_resizer" "$@"
 APPRUN
 
